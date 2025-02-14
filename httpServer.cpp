@@ -18,7 +18,7 @@ COP4635
 using namespace std;
 
 
-
+char tcp_server_message[256] = " Hello, you have successfully connected to the TCP Server \n";
 
 //function for serving files
 string serve(string filename){
@@ -54,7 +54,7 @@ cout << "Server started" << endl;
 //Setting the socket's address
 tcp_server_address.sin_family = AF_INET;
 tcp_server_address.sin_addr.s_addr = INADDR_ANY;
-tcp_server_address.sin_port = htons(60003);
+tcp_server_address.sin_port = htons(60002);
 
 //Binding the socket
 if(bind(tcp_server_socket, (struct sockaddr *) &tcp_server_address, sizeof(tcp_server_address)) < 0){
@@ -64,7 +64,7 @@ if(bind(tcp_server_socket, (struct sockaddr *) &tcp_server_address, sizeof(tcp_s
 
 cout << "Server ready" << endl;
 
-cout << "Server is listening on 127.0.0.1:60003" << endl;
+cout << "Server is listening on 127.0.0.1:60002" << endl;
 
 //listening for connections
 if(listen(tcp_server_socket, 5) < 0){
@@ -79,7 +79,8 @@ tcp_client_socket = accept(tcp_server_socket, NULL, NULL);
 // inital index.html website
 string response = serve("index.html");
 //send data stream to browser
-send(tcp_client_socket, response.c_str(), response.length(), 0); 
+//send(tcp_client_socket, response.c_str(), response.length(), 0); 
+send(tcp_client_socket, tcp_server_message, sizeof(tcp_server_message), 0);
 close(tcp_client_socket);
 
 
