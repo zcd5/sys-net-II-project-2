@@ -4,9 +4,8 @@ Zahria Davis, Jun Nguyen
 
 1. Run the command make
 
-2. run the command ./httpServer and open up a browser and go to the address 127.0.0.1:60003
+2. run the command ./httpServer 
 
-3. Click on links to request server for files
+3. on a separate terminal run the command ./httpClient <server_address> <filename>. Example: ./httpClient 127.0.0.1 index.html
 
-4. To terminate the program press ctrl+c
-
+4. Once you receive the message that you are connected, then begin making requests.

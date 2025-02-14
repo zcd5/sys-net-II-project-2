@@ -23,7 +23,6 @@ char tcp_server_message[256] = " Hello, you have successfully connected to the T
 //function for serving files
 string serve(string filename){
 
-
     ifstream file(filename.c_str());
     stringstream buffer;
     buffer << file.rdbuf();
@@ -39,6 +38,7 @@ int main(){
 struct sockaddr_in tcp_server_address;
 int tcp_server_socket;
 int tcp_client_socket;
+
 
 
 //Creation of socket
@@ -78,8 +78,10 @@ tcp_client_socket = accept(tcp_server_socket, NULL, NULL);
 
 // inital index.html website
 string response = serve("index.html");
-//send data stream to browser
+//send data stream to client
 //send(tcp_client_socket, response.c_str(), response.length(), 0); 
+
+//send connection establishment message to the client
 send(tcp_client_socket, tcp_server_message, sizeof(tcp_server_message), 0);
 close(tcp_client_socket);
 
@@ -96,7 +98,7 @@ char databuffer[1500];
 // recieve data from client
 recv(tcp_client_socket, &databuffer, sizeof(databuffer),0);
 
-
+cout << databuffer << endl;
 
 // responds to requests
      // home page
