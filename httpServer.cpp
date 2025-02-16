@@ -75,17 +75,16 @@ if(listen(tcp_server_socket, 5) < 0){
 
 
 tcp_client_socket = accept(tcp_server_socket, NULL, NULL);
+cout << "Client has connected!" << endl;
 
 // inital index.html website
 string response = serve("index.html");
-//send data stream to client
-//send(tcp_client_socket, response.c_str(), response.length(), 0); 
 
 //send connection establishment message to the client
 send(tcp_client_socket, tcp_server_message, sizeof(tcp_server_message), 0);
 close(tcp_client_socket);
 
-
+char databuffer[1500];
 // loop opens, responds, and closes client sockets
 while(true){
     
@@ -94,7 +93,9 @@ tcp_client_socket = accept(tcp_server_socket, NULL, NULL);
 if(tcp_client_socket < 0){
     continue;
 }
-char databuffer[1500];
+
+// clears databuffer
+memset(databuffer, '\0', sizeof(databuffer));
 // recieve data from client
 recv(tcp_client_socket, &databuffer, sizeof(databuffer),0);
 
@@ -104,10 +105,17 @@ cout << databuffer << endl;
      // home page
 if(strncmp(databuffer,"GET / ", 6)==0){
         cout << "Server is listening for client requests..." << endl;
+        cout << "serving homepage(index.html)";
         response = serve("index.html");
         send(tcp_client_socket, response.c_str(), response.length(), 0); 
     }
-else if(strncmp(databuffer,"GET /testPresence.html", 6)==0){
+else if(strncmp(databuffer,"GET /index.html", 15)==0){
+
+        cout << "Fetching file" << endl;
+        response = serve("index.html");
+        send(tcp_client_socket, response.c_str(), response.length(), 0); 
+    }
+else if(strncmp(databuffer,"GET /testPresence.html", 22)==0){
 
         cout << "Fetching file" << endl;
         response = serve("testPresence.html");
@@ -115,7 +123,7 @@ else if(strncmp(databuffer,"GET /testPresence.html", 6)==0){
         cout << "File has been fetched" << endl;
     
     }
-else if (strncmp(databuffer,"GET /img.jpg", 6)==0){
+else if (strncmp(databuffer,"GET /img.jpg", 12)==0){
         cout << "Fetching image" << endl;
         // open image file and set to the eof 
         ifstream f("img.jpg", ios::ate);
@@ -135,6 +143,13 @@ else if (strncmp(databuffer,"GET /img.jpg", 6)==0){
         send (tcp_client_socket, image, size, 0);
         cout << "Image has been fetched" << endl;
     }
+else if(strncmp(databuffer,"message", 7)==0){
+    cout << "\nmessage recived: ";
+    cout << databuffer << endl;
+    //sending info to client saying info was recived
+    response = "Server- this message was recived: " + string(databuffer);
+    send(tcp_client_socket, response.c_str(), response.length(), 0); 
+}
         // any other requests get a 404 response, i made a Small 404.html
 else{
         response = serve("404.html");
